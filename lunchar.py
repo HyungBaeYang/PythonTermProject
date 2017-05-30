@@ -1,41 +1,47 @@
-
+# -*- coding: cp949 -*-
 loopFlag = 1
-from xmlgoods import *
+
+from internet import *
 
 
+#### Menu  implementation
 def printMenu():
-    print("â‚©nWelcome! Book Manager Program (xml version)")
-    print("========Menu==========")
-    print("Load xml:  l")
-    print("Print dom to xml: p")
-    print("Quit program:   q")
-    print("print Goods list: b")
-    print("========Menu==========")
+    print("\n¼­¿ïÆ¯º°½Ã ±ÍÁßÇ° ºĞ½Ç¹° ¾È³» ÇÁ·Î±×·¥")
+
+
 
 
 
 def launcherFunction(menu):
-    if menu ==  'l':
-        LoadXMLFromFile()
-    elif menu == 'q':
-        QuitBookMgr()
-    elif menu == 'p':
-        PrintDOMtoXML()
-    elif menu == 'b':
-        PrintBookList(["title",])
+
+    if menu == 'p':
+        temp = 1
+        # PrintDOMtoXML()
+
+    elif menu == 'e':
+        print("========Menu==========")
+        print("b1 : ¼­¿ï ¹ö½º, b2 : ¸¶À» ¹ö½º")
+        print("s1 : ÁöÇÏÃ¶ 1 ~ 4È£¼±, s2 : ÁöÇÏÃ¶ 5 ~ 8È£¼±")
+        print("s3 : ÄÚ·¹ÀÏ")
+        print("s4 : ÁöÇÏÃ¶ 9È£¼±")
+        print("t1 : ¹ıÀÎ ÅÃ½Ã, t2 : °³ÀÎ ÅÃ½Ã")
+        print("========Menu==========")
+        location = str(input('À§Ä¡ ÄÚµå ÀÔ·Â : '))
+        item = str(input('¹°Ç° : '))
+        print(item)
+        print(location)
+        ret = getDataFromtitle(item, location)
+        # keyword = str(input ('input keyword to search :'))
+        # printBookList(SearchBookTitle(keyword))
     else:
-        print ("error : unknow menu key")
+        print("error : unknow menu key")
 
 
-def QuitBookMgr():
-    global loopFlag
-    loopFlag = 0
-    #BooksFree()
-
-
-while(loopFlag > 0):
+##### run #####
+while (loopFlag > 0):
     printMenu()
-    menuKey = str(input ('select menu :'))
+    print("°Ë»ö ´ÜÃàÅ° : e")
+    menuKey = str(input(' '))
     launcherFunction(menuKey)
 else:
-    print ("Thank you! Good Bye")
+    print("Thank you! Good Bye")
