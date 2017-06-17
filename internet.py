@@ -3,8 +3,16 @@ from xml.dom.minidom import parse, parseString
 from xml.etree import ElementTree
 from http.client import HTTPConnection
 from http.server import BaseHTTPRequestHandler, HTTPServer
-import urllib
+from tkinter import *
+from tkinter import font
 
+import urllib
+import tkinter.messagebox
+
+DataList = []
+
+
+global RenderText
 ##global
 conn = None
 numOfData = 5895
@@ -61,6 +69,10 @@ def getDataFromtitle(title, Location):
 def printDetailWithname(strXml, name, Location):
     from xml.etree import ElementTree
     tree = ElementTree.fromstring(strXml)
+
+    global DataList
+    DataList.clear()
+
     print(strXml)
     # Book 엘리먼트를 가져옵니다.
     itemElements = tree.getiterator("row")  # return list type
@@ -79,6 +91,21 @@ def printDetailWithname(strXml, name, Location):
             print("잃어버린 날짜 : ", dataTitle.text)
             print("현재 위치 : ", location.text)
             print('------------------')
+
+            for i in range(len(DataList)):
+                RenderText.insert(INSERT, "[")
+                RenderText.insert(INSERT, i + 1)
+                RenderText.insert(INSERT, "] ")
+                RenderText.insert(INSERT, "시설명: ")
+                RenderText.insert(INSERT, DataList[i][0])
+                RenderText.insert(INSERT, "\n")
+                RenderText.insert(INSERT, "주소: ")
+                RenderText.insert(INSERT, DataList[i][1])
+                RenderText.insert(INSERT, "\n")
+                RenderText.insert(INSERT, "전화번호: ")
+                RenderText.insert(INSERT, DataList[i][2])
+                RenderText.insert(INSERT, "\n\n")
+
 
 
 def checkConnection():
