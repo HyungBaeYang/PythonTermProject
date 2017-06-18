@@ -9,10 +9,6 @@ from tkinter import font
 import urllib
 import tkinter.messagebox
 
-DataList = []
-
-
-global RenderText
 ##global
 conn = None
 numOfData = 5895
@@ -91,21 +87,6 @@ def printDetailWithname(strXml, name, Location):
             print("잃어버린 날짜 : ", dataTitle.text)
             print("현재 위치 : ", location.text)
             print('------------------')
-
-            for i in range(len(DataList)):
-                RenderText.insert(INSERT, "[")
-                RenderText.insert(INSERT, i + 1)
-                RenderText.insert(INSERT, "] ")
-                RenderText.insert(INSERT, "시설명: ")
-                RenderText.insert(INSERT, DataList[i][0])
-                RenderText.insert(INSERT, "\n")
-                RenderText.insert(INSERT, "주소: ")
-                RenderText.insert(INSERT, DataList[i][1])
-                RenderText.insert(INSERT, "\n")
-                RenderText.insert(INSERT, "전화번호: ")
-                RenderText.insert(INSERT, DataList[i][2])
-                RenderText.insert(INSERT, "\n\n")
-
 
 
 def checkConnection():
