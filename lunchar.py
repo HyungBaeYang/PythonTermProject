@@ -1,4 +1,4 @@
-# -*- coding: cp949 -*-
+# -*- coding:utf-8 -*-
 loopFlag = 1
 
 from xml.dom.minidom import parse, parseString
@@ -10,8 +10,22 @@ from tkinter import *
 from tkinter import font
 import tkinter.messagebox
 
+import smtplib
+import mimetypes
+
+from email.mime.base import MIMEBase
+from email.mime.text import MIMEText 	#ÌÖçÏä§Ìä∏Î•º ÏúÑÌï¥ÏÑú
+
+
+
+
+
+#global value
+
+
+
 g_Tk = Tk()
-g_Tk.geometry("400x600+700+200")
+g_Tk.geometry("800x600+700+200")
 
 DataList = []
 ##global
@@ -19,11 +33,11 @@ conn = None
 numOfData = 5895
 regKey = "6f6c5578597a7a6131326e4e654561"
 
-# ≥◊¿Ãπˆ OpenAPI ¡¢º” ¡§∫∏ information
+#ÏÑúÏö∏ Ïó¥Î¶∞ Îç∞Ïù¥ÌÑ∞ Í¥ëÏû• Ïó∞Í≤∞ Î≥ÄÏàò.
 server = 'openapi.seoul.go.kr:8088'
 
-# smtp ¡§∫∏
-host = "smtp.gmail.com"  # Gmail SMTP º≠πˆ ¡÷º“.
+# smtp Ï†ïÎ≥¥
+host = "smtp.gmail.com"  # Gmail SMTP ÏÑúÎ≤Ñ Ï£ºÏÜå.
 port = "587"
 
 
@@ -69,16 +83,12 @@ def getDataFromtitle(title, Location):
         return None
 
 def printDetailWithname(strXml, name, Location):
+
     from xml.etree import ElementTree
     tree = ElementTree.fromstring(strXml)
 
-    global DataList
-    DataList.clear()
-
-    print(strXml)
-        # Book ø§∏Æ∏’∆Æ∏¶ ∞°¡Æø…¥œ¥Ÿ.
+    # Book ÏóòÎ¶¨Î®ºÌä∏Î•º Í∞ÄÏ†∏ÏòµÎãàÎã§.
     itemElements = tree.getiterator("row")  # return list type
-    print(itemElements)
     for item in itemElements:
         get_name = item.find('GET_NAME')
         if name in get_name.text:
@@ -86,34 +96,25 @@ def printDetailWithname(strXml, name, Location):
             adres = item.find('TAKE_PLACE')
             dataTitle = item.find('GET_DATE')
             location = item.find('GET_POSITION')
-            #print('------------------')
-            #RenderText.insert("π∞«∞ ID : ", id.text)
-            #RenderText.insert("¿“æÓπˆ∏∞ ¿Âº“ : ", adres.text)
-            #RenderText.insert("¿“æÓπˆ∏∞ π∞«∞ : ", get_name.text)
-            #RenderText.insert("¿“æÓπˆ∏∞ ≥Ø¬• : ", dataTitle.text)
-            #RenderText.insert("«ˆ¿Á ¿ßƒ° : ", location.text)
-            #print('------------------')
-
-
-            for i in range(len(itemElements)):
-                RenderText.insert(i, "[")
-                RenderText.insert(i, i + 1)
-                RenderText.insert(i, "] ")
-                RenderText.insert(i, "π∞«∞ ID : ")
-                RenderText.insert(i, id.text)
-                RenderText.insert(i, "Çn")
-                RenderText.insert(i, "∫–Ω«¿Âº“ : ")
-                RenderText.insert(i, adres.text)
-                RenderText.insert(i, "Çn")
-                RenderText.insert(i, "∫–Ω«π∞«∞ : ")
-                RenderText.insert(i, get_name.text)
-                RenderText.insert(i, "Çn")
-                RenderText.insert(i, "∫–Ω«≥Ø¬• : ")
-                RenderText.insert(i, dataTitle.text)
-                RenderText.insert(i, "Çn")
-                RenderText.insert(i, "«ˆ¿Á¿ßƒ° : ")
-                RenderText.insert(i, location.text)
-                RenderText.insert(i, "ÇnÇn")
+            for i in range(len(item)):
+                RenderText.insert(INSERT, "[")
+                RenderText.insert(INSERT, i + 1)
+                RenderText.insert(INSERT, "] ")
+                RenderText.insert(INSERT, "Î¨ºÌíà ID : ")
+                RenderText.insert(INSERT, id.text)
+                RenderText.insert(INSERT, "\n")
+                RenderText.insert(INSERT, "Î∂ÑÏã§Ïû•ÏÜå : ")
+                RenderText.insert(INSERT, adres.text)
+                RenderText.insert(INSERT, "\n")
+                RenderText.insert(INSERT, "Î∂ÑÏã§Î¨ºÌíà : ")
+                RenderText.insert(INSERT, get_name.text)
+                RenderText.insert(INSERT, "\n")
+                RenderText.insert(INSERT, "Î∂ÑÏã§ÎÇ†Ïßú : ")
+                RenderText.insert(INSERT, dataTitle.text)
+                RenderText.insert(INSERT, "\n")
+                RenderText.insert(INSERT, "ÌòÑÏû¨ÏúÑÏπò : ")
+                RenderText.insert(INSERT, location.text)
+                RenderText.insert(INSERT, "\n\n")
 
 def checkConnection():
     global conn
@@ -126,79 +127,103 @@ def checkConnection():
 #### Menu  implementation
 def printMenu():
     Tempfont = font.Font(g_Tk, size = 20, weight = 'bold', family = 'Consolas')
-    mainText = Label(g_Tk, font = Tempfont, text = "º≠øÔ∆Ø∫∞Ω√ ±Õ¡ﬂ«∞ ∫–Ω«π∞ æ»≥ª «¡∑Œ±◊∑•")
+    mainText = Label(g_Tk, font = Tempfont, text = "ÏÑúÏö∏ÌäπÎ≥ÑÏãú Í∑ÄÏ§ëÌíà Î∂ÑÏã§Î¨º ÏïàÎÇ¥ ÌîÑÎ°úÍ∑∏Îû®")
     mainText.pack()
     mainText.place(x = 20)
 
 
 
-def SearchListBox():
-    global eSearchListBox
+def initSearchListBox():
+    global SearchListBox
     ListBoxScrollbar = Scrollbar(g_Tk)
     ListBoxScrollbar.pack()
     ListBoxScrollbar.place(x = 150, y = 50)
 
     TempFont = font.Font(g_Tk, size = 15, weight = 'bold', family = 'Consolas')
-    eSearchListBox = Listbox(g_Tk, font = TempFont, activestyle = 'none', width = 10, height = 1,
+    SearchListBox = Listbox(g_Tk, font = TempFont, activestyle = 'none', width = 10, height = 1,
                             borderwidth = 12, relief = 'ridge', yscrollcommand = ListBoxScrollbar.set)
 
-    eSearchListBox.insert(1, "º≠øÔ πˆΩ∫")
-    eSearchListBox.insert(2, "¡ˆ«œ√∂ 1~4")
-    eSearchListBox.insert(3, "¡ˆ«œ√∂ 5~8")
-    eSearchListBox.insert(4, "¡ˆ«œ√∂9»£º±")
-    eSearchListBox.insert(5, "ƒ⁄∑π¿œ")
-    eSearchListBox.insert(6, "π˝¿Œ ≈√Ω√")
-    eSearchListBox.insert(7, "∞≥¿Œ ≈√Ω√")
-    eSearchListBox.pack()
-    eSearchListBox.place(x = 10, y = 50)
+    SearchListBox.insert(1, "ÏÑúÏö∏ Î≤ÑÏä§")
+    SearchListBox.insert(2, "ÏßÄÌïòÏ≤† 1~4")
+    SearchListBox.insert(3, "ÏßÄÌïòÏ≤† 5~8")
+    SearchListBox.insert(4, "ÏßÄÌïòÏ≤†9Ìò∏ÏÑ†")
+    SearchListBox.insert(5, "ÏΩîÎ†àÏùº")
+    SearchListBox.insert(6, "Î≤ïÏù∏ ÌÉùÏãú")
+    SearchListBox.insert(7, "Í∞úÏù∏ ÌÉùÏãú")
+    SearchListBox.pack()
+    SearchListBox.place(x = 10, y = 50)
 
-    ListBoxScrollbar.config(command = eSearchListBox.yview)
+    ListBoxScrollbar.config(command = SearchListBox.yview)
 
 def InitInputLabel():
     global InputLabel
     TempFont = font.Font(g_Tk, size=15, weight='bold', family = 'Consolas')
     InputLabel = Entry(g_Tk, font = TempFont, width = 26, borderwidth = 12, relief = 'ridge')
-    print(Entry)
     InputLabel.pack()
     InputLabel.place(x=10, y=105)
 
 
 def InitSearchButton():
     TempFont = font.Font(g_Tk, size=12, weight='bold', family = 'Consolas')
-    SearchButton = Button(g_Tk, font = TempFont, text="π∞«∞∞Àªˆ",  command=SearchButtonAction)
+    SearchButton = Button(g_Tk, font = TempFont, text="Î¨ºÌíàÍ≤ÄÏÉâ",  command=SearchButtonAction)
     SearchButton.pack()
     SearchButton.place(x=330, y=110)
+
+def mailSendButton():
+    TempFont = font.Font(g_Tk, size=12, weight='bold', family = 'Consolas')
+    SearchButton = Button(g_Tk, font = TempFont, text="Î©îÏùºÏ†ÑÏÜ° ",  command=SearchButtonAction)
+    SearchButton.pack()
+    SearchButton.place(x=330, y=150)
+
+
+def mailSendButtonAction():
+
+    host = "smtp.gmail.com"  # Gmail STMP ÏÑúÎ≤Ñ Ï£ºÏÜå.
+    port = "587"
+    htmlFileName = "logo.html"
+
+    senderAddr = "zzang1725@gmail.com"  # Î≥¥ÎÇ¥Îäî ÏÇ¨Îûå email Ï£ºÏÜå.
+    recipientAddr = "zzang1725@naver.com"  # Î∞õÎäî ÏÇ¨Îûå email Ï£ºÏÜå.
+
+    msg = MIMEBase("multipart", "alternative")
+    msg['Subject'] = "Î∂ÑÏã§Î¨º Ï†ïÎ≥¥ Î©îÏùºÏûÖÎãàÎã§."
+
+    msg['From'] = senderAddr
+    msg['To'] = recipientAddr
+
+    SendEmail()
+
 
 def SearchButtonAction():
     global SearchListBox
     RenderText.configure(state='normal')
-    RenderText.delete(0.0, END)  # ?¥Ï? Ï∂?? ?????Î™®Î? ???
+    RenderText.delete(0.0, END)  # ?ÎåÅ? Áï∞?? ?????Ôßè‚ë§? ???
     iSearchIndex = SearchListBox.curselection()[0]
-
-    if iSearchIndex == 0:  # ??û≈Í¥?
+    if iSearchIndex == 0:  # ??ÍΩåÊÑø?
+        print(InputLabel.get())
         location = "b1"
-        getDataFromtitle(Entry, location)
-    elif iSearchIndex == 1:  # Î™®Î????
+        getDataFromtitle(InputLabel.get(), location)
+    elif iSearchIndex == 1:  # Ôßè‚ë§????
         location = "b2"
-        getDataFromtitle(Entry, location)
-    elif iSearchIndex == 2:  # Îß??
+        getDataFromtitle(InputLabel.get(), location)
+    elif iSearchIndex == 2:  # Ôßç??
         location = "s1"
-        getDataFromtitle(Entry, location)
+        getDataFromtitle(InputLabel.get(), location)
     elif iSearchIndex == 3:
         location = "s2"
-        getDataFromtitle(Entry, location)
+        getDataFromtitle(InputLabel.get(), location)
     elif iSearchIndex == 4:
         location = "s4"
-        getDataFromtitle(Entry, location)
+        getDataFromtitle(InputLabel.get(), location)
     elif iSearchIndex == 5:
         location = "s3"
-        getDataFromtitle(Entry, location)
+        getDataFromtitle(InputLabel.get(), location)
     elif iSearchIndex == 6:
         location = "t1"
-        getDataFromtitle(Entry, location)
+        getDataFromtitle(InputLabel.get(), location)
     elif iSearchIndex == 7:
         location = "t2"
-        getDataFromtitle(Entry, location)
+        getDataFromtitle(InputLabel.get(), location)
 
 
     RenderText.configure(state='disabled')
@@ -221,37 +246,23 @@ def InitRenderText():
     RenderText.configure(state='disabled')
 
 
+def SendEmail():
+    # Î©îÏùºÏùÑ Î∞úÏÜ°ÌïúÎã§.
+    s = smtplib.MySMTP(host, port)
+    # s.set_debuglevel(1)        # ÎîîÎ≤ÑÍπÖÏù¥ ÌïÑÏöîÌï† Í≤ΩÏö∞ Ï£ºÏÑùÏùÑ ÌëºÎã§.
+    s.ehlo()
+    s.starttls()
+    s.ehlo()
+    s.login("milkelf.choi@gmail.com", "**********")
+    s.sendmail(senderAddr, [recipientAddr], msg.as_string())
+    s.close()
 
-#def launcherFunction(menu):
-
-#    if menu == 'e':
-#        print("========Menu==========")
-#        print("b1 : º≠øÔ πˆΩ∫, b2 : ∏∂¿ª πˆΩ∫")
-#        print("s1 : ¡ˆ«œ√∂ 1 ~ 4»£º±, s2 : ¡ˆ«œ√∂ 5 ~ 8»£º±")
-#        print("s3 : ƒ⁄∑π¿œ")
-#        print("s4 : ¡ˆ«œ√∂ 9»£º±")
-#        print("t1 : π˝¿Œ ≈√Ω√, t2 : ∞≥¿Œ ≈√Ω√")
-#        print("========Menu==========")
-#        location = str(input('¿ßƒ° ƒ⁄µÂ ¿‘∑¬ : '))
-#        item = str(input('π∞«∞ : '))
-#        ret = getDataFromtitle(item, location)
-#    else:
-#        print("error : unknow menu key")
-
-
-##### run #####
-#while (loopFlag > 0):
-#    printMenu()
-#    print("∞Àªˆ ¥‹√‡≈∞ : e")
-#    menuKey = str(input(' '))
-##    launcherFunction(menuKey)
-#else:
-#    print("Thank you! Good Bye")
 
 printMenu()
-SearchListBox()
+initSearchListBox()
 InitInputLabel()
 InitSearchButton()
+mailSendButton()
 InitRenderText()
 
 g_Tk.mainloop()
