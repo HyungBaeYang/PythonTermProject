@@ -21,7 +21,12 @@ from email.mime.text import MIMEText 	#텍스트를 위해서
 
 
 #global value
+host = "smtp.gmail.com"  # Gmail STMP 서버 주소.
+port = "587"
+htmlFileName = "logo.html"
 
+senderAddr = "zzang1725@gmail.com"  # 보내는 사람 email 주소.
+recipientAddr = "zzang1725@naver.com"  # 받는 사람 email 주소.
 
 
 g_Tk = Tk()
@@ -35,13 +40,6 @@ regKey = "6f6c5578597a7a6131326e4e654561"
 
 #서울 열린 데이터 광장 연결 변수.
 server = 'openapi.seoul.go.kr:8088'
-
-# smtp 정보
-host = "smtp.gmail.com"  # Gmail SMTP 서버 주소.
-port = "587"
-
-
-
 
 def userURIBuilder(server, **user):
     str = "http://" + server + "/"
@@ -178,12 +176,7 @@ def mailSendButton():
 
 def mailSendButtonAction():
 
-    host = "smtp.gmail.com"  # Gmail STMP 서버 주소.
-    port = "587"
-    htmlFileName = "logo.html"
 
-    senderAddr = "zzang1725@gmail.com"  # 보내는 사람 email 주소.
-    recipientAddr = "zzang1725@naver.com"  # 받는 사람 email 주소.
 
     msg = MIMEBase("multipart", "alternative")
     msg['Subject'] = "분실물 정보 메일입니다."
