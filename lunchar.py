@@ -19,7 +19,6 @@ from email.mime.text import MIMEText 	#텍스트를 위해서
 
 
 
-
 #global value
 host = "smtp.gmail.com"  # Gmail STMP 서버 주소.
 port = "587"
