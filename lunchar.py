@@ -23,10 +23,10 @@ from email.mime.text import MIMEText 	#텍스트를 위해서
 #global value
 host = "smtp.gmail.com"  # Gmail STMP 서버 주소.
 port = "587"
-htmlFileName = "logo.html"
 
-senderAddr = "zzang1725@gmail.com"  # 보내는 사람 email 주소.
+senderAddr = "didgudqo13@gmail.com"  # 보내는 사람 email 주소.
 recipientAddr = "zzang1725@naver.com"  # 받는 사람 email 주소.
+
 
 
 g_Tk = Tk()
@@ -169,7 +169,7 @@ def InitSearchButton():
 
 def mailSendButton():
     TempFont = font.Font(g_Tk, size=12, weight='bold', family = 'Consolas')
-    SearchButton = Button(g_Tk, font = TempFont, text="메일전송 ",  command=SearchButtonAction)
+    SearchButton = Button(g_Tk, font = TempFont, text="메일전송 ",  command=mailSendButtonAction)
     SearchButton.pack()
     SearchButton.place(x=330, y=150)
 
@@ -177,14 +177,22 @@ def mailSendButton():
 def mailSendButtonAction():
 
 
-
-    msg = MIMEBase("multipart", "alternative")
+    msg = MIMEText(RenderText.get('1.0', END))
     msg['Subject'] = "분실물 정보 메일입니다."
 
     msg['From'] = senderAddr
     msg['To'] = recipientAddr
 
-    SendEmail()
+
+    # 메일을 발송한다.
+    s = smtplib.SMTP(host, port)
+    # s.set_debuglevel(1)        # 디버깅이 필요할 경우 주석을 푼다.
+    s.ehlo()
+    s.starttls()
+    s.ehlo()
+    s.login("didgudqo13@gmail.com", "rlaalrud1")
+    s.sendmail(senderAddr, [recipientAddr], msg.as_string())
+    s.close()
 
 
 def SearchButtonAction():
@@ -237,18 +245,6 @@ def InitRenderText():
     RenderTextScrollbar.pack(side=RIGHT, fill=BOTH)
 
     RenderText.configure(state='disabled')
-
-
-def SendEmail():
-    # 메일을 발송한다.
-    s = smtplib.MySMTP(host, port)
-    # s.set_debuglevel(1)        # 디버깅이 필요할 경우 주석을 푼다.
-    s.ehlo()
-    s.starttls()
-    s.ehlo()
-    s.login("milkelf.choi@gmail.com", "**********")
-    s.sendmail(senderAddr, [recipientAddr], msg.as_string())
-    s.close()
 
 
 printMenu()
